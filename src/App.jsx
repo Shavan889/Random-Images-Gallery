@@ -1,20 +1,102 @@
-import Card from "../components/Card";
+import { X } from "lucide-react";
+import React, { useState } from "react";
 
 const App = () => {
+  const [tittle, setTittle] = useState("");
+  const [details, setDetails] = useState("");
+  const [task, setTask] = useState([]);
+
+  const submitHandler = (e) => {
+    console.log(tittle);
+    console.log(task);
+    e.preventDefault();
+
+    const copyTask = [...task];
+    copyTask.push({ tittle, details });
+    setTask(copyTask);
+
+    setTittle("");
+    setDetails("");
+  };
+
+  const deleteNote = (idx) => {
+    const copyTask = [...task];
+    copyTask.splice(idx, 1);
+    setTask(copyTask);
+  };
+
   return (
-    <>
-      <div className="flex flex-wrap">
-        <Card cpny="Amazon" img="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/19218417/acastro_190920_1777_amazon_0001.0.png?quality=90&strip=all&crop=16.666666666667,0,66.666666666667,100" job="Senior UI/UX Designer" pay="120" days="5" location="Washington" rol="Junior Level" time="Full time"/>
-        <Card cpny="Adobe" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9UoxZj0CuFNbu7MpLsxbSrOmDiNq2sH2n7Q&s" job="Graphic designer" pay="250" days="2" location="Park Avenue,California" rol="Senior Level" time="Full time"/>
-        <Card cpny="Nvidia" img="https://yt3.googleusercontent.com/btm1_PK-7VRUr9GY2D0UV_2XfbUZPBjghyptjSO1crsfN86HyTYDWPmUbq7JxC3H0Lxe_s067nA=s900-c-k-c0x00ffffff-no-rj" job="Senior Developer" pay="160" days="3" location="Santa Clara, USA" rol="Junior Level" time="Full time"/>
-        <Card cpny="Google" img="https://play-lh.googleusercontent.com/NN8G4Xc03GSv2_Tu-icuoeOwSo1xoZ4ouzUl24fVlwm5OeIAo7gV0zS1dVRWgCay-BU" job="Cloud Engineer" pay="200" days="2" location="Amphitheatre Parkway" rol="Senior Level" time="Part time"/>
-        <Card cpny="Rockstar Games" img="https://yt3.googleusercontent.com/-jCZaDR8AoEgC6CBPWFubF2PMSOTGU3nJ4VOSo7aq3W6mR8tcRCgygd8fS-4Ra41oHPo3F3P=s900-c-k-c0x00ffffff-no-rj" job="Game Developer" pay="350" days="1" location=" New York" rol="Senior Level" time="Full time"/>
-        <Card cpny="Flipkart" img="https://play-lh.googleusercontent.com/0-sXSA0gnPDKi6EeQQCYPsrDx6DqnHELJJ7wFP8bWCpziL4k5kJf8RnOoupdnOFuDm_n=s256-rw" job="sales Manager" pay="89" days="4" location="Bengaluru" rol="Senior Level" time="Part time"/>
-        <Card cpny="Walmart" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtluch4x5ld-2uFpzW2Y1skC0js74xYLTY-A&s" job="Store Manager" pay="450" days="3" location="Bentonville, Arkansas" rol="Junior Level" time="Part time"/>
-        <Card cpny="Porsche" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFGxaSQnCZSQPXJpmEauA_tqVSflVxp9QNZg&s" job="Mechanic Engineer" pay="575" days="2" location="Stuttgart-Zuffenhausen" rol="Senior Level" time="Full time"/>
+  <div className="min-h-screen bg-linear-to-br from-gray-900 via-black to-gray-800 text-white p-10">
+    
+    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+      
+      {/* Left Side - Form */}
+      <div className="bg-white/5 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-white/10">
+        <h1 className="text-4xl font-bold mb-6">Add New Note</h1>
+
+        <form onSubmit={submitHandler} className="flex flex-col gap-5">
+          
+          <input
+            value={tittle}
+            onChange={(e) => setTittle(e.target.value)}
+            className="px-4 py-3 bg-black/40 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            type="text"
+            placeholder="Enter note title"
+            required
+          />
+
+          <textarea
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            className="px-4 py-3 h-40 bg-black/40 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
+            placeholder="Enter note details"
+            required
+          />
+
+          <button className="bg-indigo-600 hover:bg-indigo-700 transition-all duration-200 py-3 rounded-xl font-semibold active:scale-95">
+            Add Note
+          </button>
+
+        </form>
       </div>
-    </>
-  );
+
+      {/* Right Side - Notes */}
+      <div>
+        <h1 className="text-3xl font-bold mb-6">Your Notes</h1>
+
+        {task.length === 0 && (
+          <p className="text-gray-400">No notes added yet...</p>
+        )}
+
+        <div className="grid sm:grid-cols-2 gap-6">
+          {task.map((elem, idx) => (
+            <div
+              key={idx}
+              className="relative bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-xl border border-white/10 hover:scale-105 transition duration-300"
+            >
+              
+              <button
+                onClick={() => deleteNote(idx)}
+                className="absolute top-3 right-3 text-red-500 hover:scale-110 transition"
+              >
+                <X size={22} />
+              </button>
+
+              <h2 className="text-xl font-semibold mb-2">
+                {elem.tittle}
+              </h2>
+
+              <p className="text-gray-300 text-sm leading-relaxed">
+                {elem.details}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+);
 };
 
 export default App;
